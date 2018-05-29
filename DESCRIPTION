@@ -1,0 +1,15 @@
+Package: cattleIDjp
+Title: Search NLBC Database by Cattle ID Numbers
+Version: 0.0.0.9000
+Authors@R: person("Yuri", "Fujimoto", email = "fmsan51@gmail.com", role = c("aut", "cre"))
+Description: Searches and downloads information from www.id.nlbc.go.jp by cattle identification numbers.
+Depends: R (>= 3.5.0)
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
+Imports: tcltk,
+    tcltk2,
+    rvest,
+    methods,
+    utils
