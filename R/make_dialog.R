@@ -215,7 +215,6 @@ make_dialog <- function(encoding = getOption("encoding")) {
     skip <- ifelse(is.na(row_s), 0, row_s - 1)
     nrows <- ifelse(is.na(row_e), -1, row_e - skip)
   }
-  print(nrows)
 
   ids <- load_ids(input = input, use_clipboard = use_clipboard, col = col,
                   skip = skip, nrows = nrows)
