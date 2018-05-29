@@ -1,11 +1,11 @@
 # cid
 #' Search cattle information by ID
 #'
-#' Searches cattle information from \link{https://www.id.nlbc.go.jp/} by cattle identification numbers and output a csv file.
+#' Searches cattle information from https://www.id.nlbc.go.jp/ by cattle identification numbers and output a csv file.
 #'
-#' Searches and downloads cattle information from database of National Livestock Breeding Center, Japan (\link{https://www.id.nlbc.go.jp/}) by cattle identification numbers and output a csv file contains cattle information.
+#' Searches and downloads cattle information from database of National Livestock Breeding Center, Japan (https://www.id.nlbc.go.jp/) by cattle identification numbers and outputs a csv file contains cattle information.
 #'
-#' \code{cid_dialog} opens dialog to choose a input file and an output file and set options. This one is most recommended.
+#' \code{cid_dialog} opens dialog to choose an input file and an output file and set options. This one is most recommended.
 #'
 #' \code{cid_csv} uses a csv file as input.
 #'
@@ -30,6 +30,13 @@
 #'
 #' @return A data.frame contains cattle information
 #'
+#' @examples
+#' \dontrun{
+#' cid_dialog()
+#' }
+#'
+#' id <- c(1083079037, 0123456789, 0396006198, 1389725782)
+#' cid_vector(input = id, output = NULL)
 NULL
 
 

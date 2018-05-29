@@ -170,7 +170,6 @@ make_dialog <- function(encoding = getOption("encoding")) {
 
   tcltk::tkbind(win, "<Destroy>", function() {tcltk::tclvalue(is_ok_tcl) <- 0})
 
-
   # Wait until OK or Cancel button is clicked
   tcltk::tkwm.resizable(win, 0, 0)
   tcltk::tkraise(win)
@@ -179,6 +178,10 @@ make_dialog <- function(encoding = getOption("encoding")) {
   tcltk::tkwait.variable(is_ok_tcl)
   is_ok <- tcltk::tclvalue(is_ok_tcl)
   tcltk::tkdestroy(win)
+
+  # Bring the window to the top
+  tcltk::tcl("wm", "attributes", win, topmost = T)
+  tcltk::tcl("wm", "attributes", win, topmost = F)
 
   if (is_ok == "0") {
     opt <- options(show.error.messages = F)
@@ -245,8 +248,8 @@ dialog_finished <- function() {
 #' Progress bar
 #'
 #' @param gui_pb Show progress bar in a window (T) or in console (F)
-#' @param ... Be passed to \code{\link{tcltk::tkProgressBar}} or
-#'   \code{\link{utils::txtProgressBar}}
+#' @param ... Be passed to \code{tclck::tkProgressBar} or
+#'   \code{utils::txtProgressBar}
 #'
 #' @importFrom utils txtProgressBar
 #' @importFrom tcltk tkProgressBar
@@ -262,8 +265,8 @@ ProgressBar <- function(gui_pb, ...) {
 #' Set progress bar
 #'
 #' @param gui_pb Show progress bar in a window (T) or in console (F)
-#' @param ... Be passed to \code{\link{tcltk::setTkProgressBar}} or
-#'   \code{\link{setTxtProgressBar}}
+#' @param ... Be passed to \code{tcltk::setTkProgressBar} or
+#'   \code{utils::setTxtProgressBar}
 #'
 #' @importFrom utils setTxtProgressBar
 #' @importFrom tcltk setTkProgressBar

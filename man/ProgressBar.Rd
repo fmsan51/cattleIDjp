@@ -9,8 +9,8 @@ ProgressBar(gui_pb, ...)
 \arguments{
 \item{gui_pb}{Show progress bar in a window (T) or in console (F)}
 
-\item{...}{Be passed to \code{\link{tcltk::tkProgressBar}} or
-\code{\link{utils::txtProgressBar}}}
+\item{...}{Be passed to \code{tclck::tkProgressBar} or
+\code{utils::txtProgressBar}}
 }
 \description{
 Progress bar

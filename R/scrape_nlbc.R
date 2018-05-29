@@ -148,13 +148,14 @@ scrape_info <- function(page) {
   info_cattle <- tryCatch(scrape_info_cattle(page),
     error = function(e) {stop("err_nocattle")})
   colnames(info_cattle) <- msg_info$cattle
-  rownames(info_cattle) <- NULL
 
   info_farm <- scrape_info_farm(page)
   colnames(info_farm) <- msg_info$farm
   rownames(info_farm) <- NULL
 
   info_cattle <- info_cattle[rep(1, nrow(info_farm)), , drop = F]
+  rownames(info_cattle) <- NULL
+
   return(cbind2(info_cattle, info_farm))
 }
 

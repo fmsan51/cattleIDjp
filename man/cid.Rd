@@ -37,10 +37,10 @@ output file will be removed.}
 A data.frame contains cattle information
 }
 \description{
-Searches cattle information from \link{https://www.id.nlbc.go.jp/} by cattle identification numbers and output a csv file.
+Searches cattle information from https://www.id.nlbc.go.jp/ by cattle identification numbers and output a csv file.
 }
 \details{
-Searches and downloads cattle information from database of National Livestock Breeding Center, Japan (\link{https://www.id.nlbc.go.jp/}) by cattle identification numbers and output a csv file contains cattle information.
+Searches and downloads cattle information from database of National Livestock Breeding Center, Japan (https://www.id.nlbc.go.jp/) by cattle identification numbers and outputs a csv file contains cattle information.
 
 \code{cid_dialog} opens dialog to choose a input file and an output file and set options. This one is most recommended.
 
@@ -51,4 +51,12 @@ Searches and downloads cattle information from database of National Livestock Br
 \code{cid_clipboard} uses the clipboard as input.
 
 Search speed is about 10-12 cattles/min.
+}
+\examples{
+\dontrun{
+cid_dialog()
+}
+
+id <- c(1083079037, 0123456789, 0396006198, 1389725782)
+cid_vector(input = id, output = NULL)
 }

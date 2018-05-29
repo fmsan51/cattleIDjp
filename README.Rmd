@@ -1,0 +1,72 @@
+---
+output:
+  md_document:
+    variant: gfm
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+# cattleIDjp
+
+Searches and downloads cattle information from [the database of National Livestock Breeding Center, Japan](https://www.id.nlbc.go.jp/) by cattle identification numbers and outputs a csv file contains cattle information.
+Search speed is about 10-12 cattles/min.
+
+Rを用いて、家畜改良センターの[牛の個体識別情報検索サービス](https://www.id.nlbc.go.jp/)を利用するためのパッケージです。
+検索速度は10-12頭/分です（サーバーに負担をかけないようわざと遅めにしています）。夜に実行して朝に結果を確認するといった感じの使い方をおすすめします。
+出力はcsvまたはdata.frameです。途中で何かエラーが起きて強制終了になっても、そこまでの検索結果を出力します。
+
+
+## cid_xxx
+
+`cid_dialog`:  
+**The best choice.** It opens dialog to choose an input file and and output file and set options. (See Example) 
+  
+**オススメ。**入力ファイルや出力ファイルを設定するためのダイアログを表示します。（Example参照）
+
+`cid_csv`, `cid_vector`, `cid_clipboard`:
+These use input of csv/vector/clipboard.
+  
+それぞれcsv/vector/クリップボードから個体識別番号を読み取って検索します。
+`cid_clipboard`はExcelのここからここまでの番号をぱぱっと検索したい、みたいなときに便利です。
+
+cid means Cattle ID.  
+ちなみにcidは Cattle ID の略です。
+
+
+## Example
+
+```{r cid_dialog, eval = F}
+library(cattleIDjp)
+
+# Opens dialog
+cid_dialog()
+```
+
+![Dialog](img_dialog.png)
+
+```{r invisible, include = FALSE}
+library(cattleIDjp)
+```
+```{r cid_vector}
+id <- c(1083079037, 0123456789, 0396006198, 1389725782)
+cid_vector(input = id, output = NULL)
+```
+
+
+
+## Notes
+
+NLBC itself offers a paid service to extact its data.
+See <https://www.id.nlbc.go.jp/pdf/katsuyou_kankei.pdf>.
+
+家畜改良センター自体も有料で個体識別情報の提供サービスを行っています。
+
+
