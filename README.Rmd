@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "README-"
 )
+options(width = 100)
 ```
 
 # cattleIDjp
@@ -24,17 +25,24 @@ Rを用いて、家畜改良センターの[牛の個体識別情報検索サー
 出力はcsvまたはdata.frameです。途中で何かエラーが起きて強制終了になっても、そこまでの検索結果を出力します。
 
 
+## Install
+
+```{r eval = F}
+# install.packages("devtools")
+library(devtools)
+install_github("fmsan51/cattleIDjp")
+```
+
+
 ## cid_xxx
 
 `cid_dialog`:  
 **The best choice.** It opens dialog to choose an input file and and output file and set options. (See Example) 
-  
-**オススメ。**入力ファイルや出力ファイルを設定するためのダイアログを表示します。（Example参照）
+**オススメ。** 入力ファイルや出力ファイルを設定するためのダイアログを表示します。（Example参照）
 
-`cid_csv`, `cid_vector`, `cid_clipboard`:
-These use input of csv/vector/clipboard.
-  
-それぞれcsv/vector/クリップボードから個体識別番号を読み取って検索します。
+`cid_csv`, `cid_vector`, `cid_clipboard`:  
+These use input of csv/vector/clipboard.  
+それぞれcsv/vector/クリップボードから個体識別番号を読み取って検索します。  
 `cid_clipboard`はExcelのここからここまでの番号をぱぱっと検索したい、みたいなときに便利です。
 
 cid means Cattle ID.  
