@@ -101,6 +101,8 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
                 call. = F)
         table_err <- table_err_1[rep(1, length(c(err, errID))), , drop = F]
         table_err[, 1] <- c(ids[err], errID)
+        table_err <- as.data.frame(table_err)
+        table_err[, 1] <- as.numeric(table_err)
         save2csv(table_err, output, env_nlbc)
       }
       break
