@@ -134,7 +134,7 @@ make_dialog <- function(encoding = getOption("encoding")) {
   save_output <- function(output) {
     filename <- tcltk::tclvalue(tcltk::tkgetSaveFile(
       initialfile = "cattle_info.csv",
-      filetypes = "{ {All Files} * } { {CSV Files} {.csv} }"
+      filetypes = "{ {CSV Files} {.csv} } { {All Files} * }"
     ))
     if (filename != "") {
       Encoding(filename) <- encoding
@@ -209,12 +209,13 @@ make_dialog <- function(encoding = getOption("encoding")) {
     skip <- 0
     nrows <- -1
   } else {
-    if (row_s != "" & row_e != "" & row_s > row_e) {
+    if (!is.na(row_s) && !is.na(row_e) && row_s > row_e) {
       stop(msg_make_dialog$row_err)
     }
-    skip <- ifelse(row_s != "", row_s - 1, 0)
-    nrows <- ifelse(row_e != "", row_e - row_s + 1, -1)
+    skip <- ifelse(is.na(row_s), 0, row_s - 1)
+    nrows <- ifelse(is.na(row_e), -1, row_e - skip)
   }
+  print(nrows)
 
   ids <- load_ids(input = input, use_clipboard = use_clipboard, col = col,
                   skip = skip, nrows = nrows)
