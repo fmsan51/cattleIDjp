@@ -32,7 +32,7 @@ load_ids <- function(input, use_clipboard = F, col = 1, skip = 0, nrows = -1, ..
       })
     ids <- as.vector(as.matrix(ids))
   } else {
-    ids <- read.csv(file = input,
+    ids <- read.csv(file = input, header = F,
                     colClasses = "character", skip = skip, nrows = nrows, ...)
     if (!is.vector(ids)) {
       ids <- try(ids[, col], silent = T)
