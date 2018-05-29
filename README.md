@@ -5,11 +5,12 @@
 Searches and downloads cattle information from [the database of National
 Livestock Breeding Center, Japan](https://www.id.nlbc.go.jp/) by cattle
 identification numbers and outputs a csv file contains cattle
-information. Search speed is about 10-12
+information.  
+Search speed is about 10-12
 cattles/min.
 
-Rを用いて、家畜改良センターの[牛の個体識別情報検索サービス](https://www.id.nlbc.go.jp/)を利用するためのパッケージです。
-検索速度は10-12頭/分です（サーバーに負担をかけないようわざと遅めにしています）。夜に実行して朝に結果を確認するといった感じの使い方をおすすめします。
+Rを用いて、家畜改良センターの[牛の個体識別情報検索サービス](https://www.id.nlbc.go.jp/)を利用するためのパッケージです。  
+検索速度は10-12頭/分です（サーバーに負担をかけないようわざと遅めにしています）。夜に実行して朝に結果を確認するといった感じの使い方をおすすめします。  
 出力はcsvまたはdata.frameです。途中で何かエラーが起きて強制終了になっても、そこまでの検索結果を出力します。
 
 ## Install
@@ -24,8 +25,8 @@ install_github("fmsan51/cattleIDjp")
 
 `cid_dialog`:  
 **The best choice.** It opens dialog to choose an input file and and
-output file and set options. (See Example) **オススメ。**
-入力ファイルや出力ファイルを設定するためのダイアログを表示します。（Example参照）
+output file and set options. (See Example)  
+**オススメ。** 入力ファイルや出力ファイルを設定するためのダイアログを表示します。（Example参照）
 
 `cid_csv`, `cid_vector`, `cid_clipboard`:  
 These use input of csv/vector/clipboard.  
@@ -49,8 +50,8 @@ cid_dialog()
 ``` r
 id <- c(1083079037, 0123456789, 0396006198, 1389725782)
 cid_vector(input = id, output = NULL)
-#> 終了予想時刻（目安）： 2018-05-29 11:28:01 
-#> 
+#> 終了予想時刻（目安）： 2018-05-29 11:41:11 
+#>
 #>  検索が終了しました
 #> Warning: 
 #>  以下の個体の情報が得られませんでした： 
@@ -101,7 +102,7 @@ cid_vector(input = id, output = NULL)
 
 ## Notes
 
-NLBC itself offers a paid service to extact its data. See
-<https://www.id.nlbc.go.jp/pdf/katsuyou_kankei.pdf>.
+NLBC itself offers a paid service to extact its data.  
+See <https://www.id.nlbc.go.jp/pdf/katsuyou_kankei.pdf>.
 
 家畜改良センター自体も有料で個体識別情報の提供サービスを行っています。
