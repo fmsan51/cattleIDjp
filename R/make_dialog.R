@@ -170,18 +170,18 @@ make_dialog <- function(encoding = getOption("encoding")) {
 
   tcltk::tkbind(win, "<Destroy>", function() {tcltk::tclvalue(is_ok_tcl) <- 0})
 
+  # Bring the window to the top
+  tcltk::tcl("wm", "attributes", win, topmost = T)
+  tcltk::tcl("wm", "attributes", win, topmost = F)
+
   # Wait until OK or Cancel button is clicked
   tcltk::tkwm.resizable(win, 0, 0)
-  tcltk::tkraise(win)
-  tcltk::tcl("wm", "deiconify", win)
-  # tcltk::tcl("wm", "attributes", win, topmost = T)
+  # tcltk::tkraise(win)
+  # tcltk::tcl("wm", "deiconify", win)
   tcltk::tkwait.variable(is_ok_tcl)
   is_ok <- tcltk::tclvalue(is_ok_tcl)
   tcltk::tkdestroy(win)
 
-  # Bring the window to the top
-  tcltk::tcl("wm", "attributes", win, topmost = T)
-  tcltk::tcl("wm", "attributes", win, topmost = F)
 
   if (is_ok == "0") {
     opt <- options(show.error.messages = F)
