@@ -14,7 +14,7 @@ msg_make_dialog <- list(
   row_err = "開始行は最終行より小さい行番号を指定してください"
 )
 
-msg_dialog_finised <- list(
+msg_dialog_finished <- list(
   title = "検索終了",
   message = "個体識別番号の検索が終了しました。"
 )
@@ -35,9 +35,9 @@ msg_scrape <- list(
 )
 
 msg_make_dialog <- lapply(msg_make_dialog, iconv, to = "UTF-8")
-msg_dialog_finised <- lapply(msg_dialog_finised, iconv, to = "UTF-8")
+msg_dialog_finished <- lapply(msg_dialog_finished, iconv, to = "UTF-8")
 msg_info <- lapply(msg_info, iconv, to = "UTF-8")
 msg_scrape <- lapply(msg_scrape, iconv, to = "UTF-8")
 
-devtools::use_data(msg_make_dialog, msg_dialog_finised, msg_info, msg_scrape,
+devtools::use_data(msg_make_dialog, msg_dialog_finished, msg_info, msg_scrape,
                    internal = T, overwrite = T)

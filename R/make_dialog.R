@@ -229,8 +229,8 @@ make_dialog <- function(encoding = getOption("encoding")) {
 dialog_finished <- function() {
   # tcltk::tkmessagebox cannot be used here, because it doesn't become the topmost
   finished <- tcltk::tktoplevel()
-  tcltk::tktitle(finished) <- msg_dialog_finised$title
-  finmsg <- tcltk::tklabel(finished, text = msg_dialog_finised$message,
+  tcltk::tktitle(finished) <- msg_dialog_finished$title
+  finmsg <- tcltk::tklabel(finished, text = msg_dialog_finished$message,
                            width = 40)
   finbtn <- tcltk::tkbutton(finished, text = "OK", width = -10,
                             command = function() {tcltk::tkdestroy(finished)})
