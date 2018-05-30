@@ -45,6 +45,7 @@ make_dialog <- function(encoding = getOption("encoding")) {
 
   choose_input <- function() {
     filename <- tcltk::tclvalue(tcltk::tkgetOpenFile(
+      initialdir = getwd(),
       filetypes = "{ {All Files} * } { {CSV Files} {.csv} }"
     ))
     Encoding(filename) <- encoding
@@ -186,6 +187,7 @@ make_dialog <- function(encoding = getOption("encoding")) {
   if (is_ok == "0") {
     opt <- options(show.error.messages = F)
     on.exit(options(opt))
+    stop()
   }
 
   variables <- c("input", "use_clipboard", "output", "append",
@@ -204,7 +206,7 @@ make_dialog <- function(encoding = getOption("encoding")) {
 
   use_clipboard <- (use_clipboard == "1")
   append <- (append == "1")
-  col <- ifelse(col == 0, 1, col)
+  col <- ifelse(is.na(col), 1, col)
   if (use_clipboard) {
     skip <- 0
     nrows <- -1

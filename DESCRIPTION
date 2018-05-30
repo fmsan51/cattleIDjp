@@ -13,3 +13,7 @@ Imports: tcltk,
     rvest,
     methods,
     utils
+Suggests: testthat,
+    stringr,
+    readr,
+    glue

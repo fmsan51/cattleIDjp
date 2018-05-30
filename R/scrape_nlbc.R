@@ -17,7 +17,7 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
   on.exit(return(info), add = T)
 
   cat(paste(msg_scrape$estimate,
-            Sys.time() + ((lng_ids %/% 50) + 1) * 10 * 60, "\n", sep = " "))
+            Sys.time() + (lng_ids * (10 / 60)), "\n", sep = " "))
 
   # Make output file
   if (!is.null(output)) {
@@ -35,18 +35,18 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
   }
 
   # Output table
-  info <- matrix(nrow = 0, ncol = 10)
+  info <- data.frame(matrix(nrow = 0, ncol = 10))
   colnames(info) <- c(msg_info$cattle, msg_info$farm)
 
   # A table to contain error
-  table_err_1 <- matrix(rep("ERROR", 10), nrow = 1, ncol = 10)
+  table_err_1 <- data.frame(matrix(rep("ERROR", 10), nrow = 1, ncol = 10))
   colnames(table_err_1) <- c(msg_info$cattle, msg_info$farm)
 
   now_scraping <- 0
   scrape_start <- 1
   flag_end <- 0
   flag_error <- 0
-  errID <- NULL
+  has_ctl_aft_err <- F
   errmsg_start <- NULL
   errmsg_end <- NULL
   err <- numeric(0)
@@ -70,15 +70,14 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
                     pb, env_nlbc),
           silent = T)
     if (class(err_catch) == "try-error") {
+      err <- c(err, now_scraping)
       # Continue scraping if a error is caused by
       # that there is no cattle correspoinding to a ID,
       # otherwise terminate scraping.
       if (attributes(err_catch)$condition$message == "err_nocattle") {
-        err <- c(err, now_scraping)
         flag_end <- ifelse(now_scraping == lng_ids, 1, 0)
       } else {
-        errID <- paste0(ids[now_scraping],
-                        ifelse(now_scraping == lng_ids, "", msg_scrape$after))
+        has_ctl_aft_err <- (now_scraping != lng_ids)
         flag_error <- 1
         flag_end <- 1
       }
@@ -90,20 +89,26 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
       if (flag_error == 0) {
         cat("\n", msg_scrape$finished, "\n")
       } else {
-        errmsg_start <- paste0(msg_scrape$error, "\n", err_catch[1])
-        errmsg_end <- paste0(" ", errID)
+        errmsg_start <- paste0(msg_scrape$error, "\n", err_catch[1], "\n")
+        errmsg_end <- paste0(" ",
+                             ifelse(has_ctl_aft_err, msg_scrape$after, ""))
       }
       if (length(err) != 0 | flag_error == 1) {
         warning(paste0(errmsg_start,
-                       paste(c("\n", msg_scrape$cannot_find, "\n",
+                       paste(c(msg_scrape$cannot_find, "\n",
                                ids[err]), collapse = " "),
                        errmsg_end),
                 call. = F)
-        table_err <- table_err_1[rep(1, length(c(err, errID))), , drop = F]
-        table_err[, 1] <- c(ids[err], errID)
+        table_err <- table_err_1[rep(1, length(err)), , drop = F]
         table_err <- as.data.frame(table_err)
-        table_err[, 1] <- as.numeric(table_err)
+        table_err[, 1] <- as.numeric(ids[err])
         save2csv(table_err, output, env_nlbc)
+        if (has_ctl_aft_err) {
+          table_after <- table_err_1
+          table_after[1, 1] <- msg_scrape$after
+          table_after <- as.data.frame(table_after)
+          save2csv(table_after, output, env_nlbc)
+        }
       }
       break
     }

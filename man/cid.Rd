@@ -42,7 +42,7 @@ Searches cattle information from https://www.id.nlbc.go.jp/ by cattle identifica
 \details{
 Searches and downloads cattle information from database of National Livestock Breeding Center, Japan (https://www.id.nlbc.go.jp/) by cattle identification numbers and outputs a csv file contains cattle information.
 
-\code{cid_dialog} opens dialog to choose a input file and an output file and set options. This one is most recommended.
+\code{cid_dialog} opens dialog to choose an input file and an output file and set options. This one is most recommended.
 
 \code{cid_csv} uses a csv file as input.
 
