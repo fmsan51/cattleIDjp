@@ -23,10 +23,12 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
   if (!is.null(output)) {
     if (file.exists(output) & append == T) {
       prev_out <- read.csv(output, header = T)
+      saved_err_ids <- prev_out[(prev_out[, 2] == "ERROR"), 1]
       prev_out <- prev_out[(prev_out[, 2] != "ERROR"), ]
       write.table(prev_out, file = output, sep = ",",
                   row.names = F, col.names = T)
     } else {
+      saved_err_ids <- numeric(0)
       table_title <- matrix(nrow = 0, ncol = 10)
       colnames(table_title) <- c(msg_info$cattle, msg_info$farm)
       write.table(table_title, file = output, sep = ",",
@@ -92,6 +94,12 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
         errmsg_start <- paste0(msg_scrape$error, "\n", err_catch[1], "\n")
         errmsg_end <- paste0(" ",
                              ifelse(has_ctl_aft_err, msg_scrape$after, ""))
+      }
+      if (length(saved_err_ids) != 0) {
+        table_err <- table_err_1[rep(1, length(saved_err_ids)), , drop = F]
+        table_err <- as.data.frame(table_err)
+        table_err[, 1] <- as.numeric(saved_err_ids)
+        save2csv(table_err, output, env_nlbc)
       }
       if (length(err) != 0 | flag_error == 1) {
         warning(paste0(errmsg_start,
