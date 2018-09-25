@@ -4,12 +4,14 @@
 \alias{save2csv}
 \title{Save scraped information to a csv file}
 \usage{
-save2csv(info_50, output, env)
+save2csv(info_50, output, fileEncoding, env)
 }
 \arguments{
 \item{info_50}{A table contains scraped information}
 
 \item{output}{Path to the output file}
+
+\item{fileEncoding}{Encoding of the output file. See \code{\link{file}}.}
 
 \item{env}{Envirionment which has a variable "info". (Don't set it manually.)}
 }

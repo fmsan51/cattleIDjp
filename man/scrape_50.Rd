@@ -4,7 +4,8 @@
 \alias{scrape_50}
 \title{Scrape 50 cattle}
 \usage{
-scrape_50(scrape_start, scrape_end, ids, output, lng_ids, gui_pb, pb, env_nlbc)
+scrape_50(scrape_start, scrape_end, ids, output, lng_ids, fileEncoding,
+  gui_pb, pb, env_nlbc)
 }
 \arguments{
 \item{scrape_start, scrape_end}{Define lines to scrape}
@@ -14,6 +15,8 @@ scrape_50(scrape_start, scrape_end, ids, output, lng_ids, gui_pb, pb, env_nlbc)
 \item{output}{Path to the output file}
 
 \item{lng_ids}{Length of ids}
+
+\item{fileEncoding}{Encoding of the output file. See \code{\link{file}}.}
 
 \item{gui_pb}{Show progress bar in a window (T) or in console (F)
 (Don't set it manually)}

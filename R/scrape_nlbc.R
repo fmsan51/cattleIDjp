@@ -7,11 +7,12 @@
 #' @param append If an output file is already exist, append output file (T)
 #'   or create a new file (F). When append = T, ERROR rows in previous output
 #'   file will be removed.
+#' @param fileEncoding Encoding of the output file. See \code{\link{file}}.
 #' @param gui_pb Show progress bar in a window (T) or in console (F)
 #'
 #' @importFrom utils write.table
 scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
-                        gui_pb = F) {
+                        fileEncoding = getOption("encoding"), gui_pb = F) {
   lng_ids <- length(ids)
   on.exit(close(pb))
   on.exit(return(info), add = T)
@@ -68,8 +69,8 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
     }
 
     err_catch <-
-      try(scrape_50(scrape_start, scrape_end, ids, output, lng_ids, gui_pb,
-                    pb, env_nlbc),
+      try(scrape_50(scrape_start, scrape_end, ids, output, lng_ids,
+                    fileEncoding, gui_pb, pb, env_nlbc),
           silent = T)
     if (class(err_catch) == "try-error") {
       err <- c(err, now_scraping)
@@ -99,7 +100,7 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
         table_err <- table_err_1[rep(1, length(saved_err_ids)), , drop = F]
         table_err <- as.data.frame(table_err)
         table_err[, 1] <- as.numeric(saved_err_ids)
-        save2csv(table_err, output, env_nlbc)
+        save2csv(table_err, output, fileEncoding, env_nlbc)
       }
       if (length(err) != 0 | flag_error == 1) {
         warning(paste0(errmsg_start,
@@ -110,12 +111,12 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
         table_err <- table_err_1[rep(1, length(err)), , drop = F]
         table_err <- as.data.frame(table_err)
         table_err[, 1] <- as.numeric(ids[err])
-        save2csv(table_err, output, env_nlbc)
+        save2csv(table_err, output, fileEncoding, env_nlbc)
         if (has_ctl_aft_err) {
           table_after <- table_err_1
           table_after[1, 1] <- msg_scrape$after
           table_after <- as.data.frame(table_after)
-          save2csv(table_after, output, env_nlbc)
+          save2csv(table_after, output, fileEncoding, env_nlbc)
         }
       }
       break
@@ -180,16 +181,18 @@ scrape_info <- function(page) {
 #'
 #' @param info_50 A table contains scraped information
 #' @param output Path to the output file
+#' @param fileEncoding Encoding of the output file. See \code{\link{file}}.
 #' @param env Envirionment which has a variable "info". (Don't set it manually.)
 #'
 #' @importFrom utils write.table
-save2csv <- function(info_50, output, env) {
+save2csv <- function(info_50, output, fileEncoding, env) {
   info <- get("info", envir = env)
   info <- rbind(info, info_50)
   assign("info", info, envir = env)
   if (!is.null(output)) {
     write.table(info_50, file = output, sep = ",",
-                row.names = F, col.names = F, append = T)
+                row.names = F, col.names = F, append = T,
+                fileEncoding = fileEncoding)
   }
 }
 
@@ -201,6 +204,7 @@ save2csv <- function(info_50, output, env) {
 #' @param ids A character vector of cattle ID number
 #' @param output Path to the output file
 #' @param lng_ids Length of ids
+#' @param fileEncoding Encoding of the output file. See \code{\link{file}}.
 #' @param gui_pb Show progress bar in a window (T) or in console (F)
 #'   (Don't set it manually)
 #' @param pb Progress bar (Don't set it manually)
@@ -208,10 +212,10 @@ save2csv <- function(info_50, output, env) {
 #'
 #' @import rvest
 scrape_50 <- function(scrape_start, scrape_end, ids, output, lng_ids,
-                      gui_pb, pb, env_nlbc) {
+                      fileEncoding, gui_pb, pb, env_nlbc) {
   # Table to output
   info_50 <- matrix(nrow = 0, ncol = 10)
-  on.exit(save2csv(info_50, output, env_nlbc))
+  on.exit(save2csv(info_50, output, fileEncoding, env_nlbc))
 
   assign("now_scraping", scrape_start, envir = env_nlbc)
 

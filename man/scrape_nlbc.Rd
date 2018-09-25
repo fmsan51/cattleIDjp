@@ -4,7 +4,8 @@
 \alias{scrape_nlbc}
 \title{Scrape NLBC websites}
 \usage{
-scrape_nlbc(ids, output = "cattle_info.csv", append = T, gui_pb = F)
+scrape_nlbc(ids, output = "cattle_info.csv", append = T,
+  fileEncoding = getOption("encoding"), gui_pb = F)
 }
 \arguments{
 \item{ids}{Cattle ID numbers as a character vector}
@@ -15,6 +16,8 @@ If \code{NULL}, no csv file will be made.}
 \item{append}{If an output file is already exist, append output file (T)
 or create a new file (F). When append = T, ERROR rows in previous output
 file will be removed.}
+
+\item{fileEncoding}{Encoding of the output file. See \code{\link{file}}.}
 
 \item{gui_pb}{Show progress bar in a window (T) or in console (F)}
 }
