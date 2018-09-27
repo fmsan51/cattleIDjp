@@ -11,6 +11,7 @@
 #' @param gui_pb Show progress bar in a window (T) or in console (F)
 #'
 #' @importFrom utils write.table
+#' @importFrom glue glue
 scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
                         fileEncoding = getOption("encoding"), gui_pb = F) {
   lng_ids <- length(ids)
@@ -21,40 +22,29 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
             Sys.time() + (lng_ids * 5.5) + (lng_ids %/% 50 * 30),
             "\n", sep = " "))
 
+  err_file <- file.path(dirname(output), "cid_error.log")
+  file.create(err_file)
+
   # Make output file
-  if (!is.null(output)) {
-    if (file.exists(output) & append == T) {
-      prev_out <- read.csv(output, header = T, fileEncoding = fileEncoding,
-                           colClasses = "character")
-      saved_err_ids <- prev_out[(prev_out[, 2] == "ERROR"), 1]
-      prev_out <- prev_out[(prev_out[, 2] != "ERROR"), ]
-      write.table(prev_out, file = output, sep = ",",
-                  row.names = F, col.names = T, fileEncoding = fileEncoding)
-    } else {
-      saved_err_ids <- numeric(0)
-      table_title <- matrix(nrow = 0, ncol = 10)
-      colnames(table_title) <- c(msg_info$cattle, msg_info$farm)
-      write.table(table_title, file = output, sep = ",",
-                  row.names = F, col.names = T, fileEncoding = fileEncoding)
-    }
+  if (!is.null(output) & (file.exists(output) | append == F)) {
+    table_title <- matrix(nrow = 0, ncol = 10)
+    colnames(table_title) <- c(msg_info$cattle, msg_info$farm)
+    write.table(table_title, file = output, sep = ",",
+                row.names = F, col.names = T, fileEncoding = fileEncoding)
   }
 
   # Output table
   info <- data.frame(matrix(nrow = 0, ncol = 10))
   colnames(info) <- c(msg_info$cattle, msg_info$farm)
 
-  # A table to contain error
-  table_err_1 <- data.frame(matrix(rep("ERROR", 10), nrow = 1, ncol = 10))
-  colnames(table_err_1) <- c(msg_info$cattle, msg_info$farm)
-
   now_scraping <- 0
   scrape_start <- 1
   flag_end <- 0
   flag_error <- 0
+  flag_nocattle <- 0
   has_ctl_aft_err <- F
   errmsg_start <- NULL
   errmsg_end <- NULL
-  err <- numeric(0)
   env_nlbc <- environment()
 
   pb_max <- ifelse(lng_ids == 1, 2, lng_ids)
@@ -75,15 +65,28 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
                     fileEncoding, gui_pb, pb, env_nlbc),
           silent = T)
     if (class(err_catch) == "try-error") {
-      err <- c(err, now_scraping)
+      flag_error <- 1
       # Continue scraping if a error is caused by
       # that there is no cattle correspoinding to a ID,
       # otherwise terminate scraping.
       if (attributes(err_catch)$condition$message == "err_nocattle") {
+        if (flag_nocattle == 0) {
+          cat("Following cattle were not in the database: ", file = err_file)
+          flag_nocattle <- 1
+        }
+        cat(now_scraping, "", file = err_file, append = T)
         flag_end <- ifelse(now_scraping == lng_ids, 1, 0)
       } else {
         has_ctl_aft_err <- (now_scraping != lng_ids)
-        flag_error <- 1
+        if (flag_nocattle == 1) {
+          cat("\n", file = err_file)
+        }
+        cat(glue::glue(
+          "[{Sys.time()}] Encountered unknown error and \\",
+          "information for following cattle were not obtained: \\",
+          "{now_scraping}{ifelse(has_ctl_aft_err, msg_scrape$after, \"\")}"
+        ), file = err_file, append = T)
+        flag_unknown_error <- 1
         flag_end <- 1
       }
     }
@@ -93,33 +96,15 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
     if (flag_end == 1) {
       if (flag_error == 0) {
         cat("\n", msg_scrape$finished, "\n")
+        file.remove(err_file)
       } else {
-        errmsg_start <- paste0(msg_scrape$error, "\n", err_catch[1], "\n")
-        errmsg_end <- paste0(" ",
-                             ifelse(has_ctl_aft_err, msg_scrape$after, ""))
-      }
-      if (length(saved_err_ids) != 0) {
-        table_err <- table_err_1[rep(1, length(saved_err_ids)), , drop = F]
-        table_err <- as.data.frame(table_err)
-        table_err[, 1] <- as.numeric(saved_err_ids)
-        save2csv(table_err, output, fileEncoding, env_nlbc)
-      }
-      if (length(err) != 0 | flag_error == 1) {
-        warning(paste0(errmsg_start,
-                       paste(c(msg_scrape$cannot_find, "\n",
-                               ids[err]), collapse = " "),
-                       errmsg_end),
-                call. = F)
-        table_err <- table_err_1[rep(1, length(err)), , drop = F]
-        table_err <- as.data.frame(table_err)
-        table_err[, 1] <- as.numeric(ids[err])
-        save2csv(table_err, output, fileEncoding, env_nlbc)
-        if (has_ctl_aft_err) {
-          table_after <- table_err_1
-          table_after[1, 1] <- msg_scrape$after
-          table_after <- as.data.frame(table_after)
-          save2csv(table_after, output, fileEncoding, env_nlbc)
+        if (flag_nocattle == 1) {
+          warning("Some cattle were not found on database.", call. = F)
         }
+        if (flag_unknown_error == 1) {
+          warning("Encontered unknown error.", call. = F)
+        }
+        warning("See cid_err.log.", call. = F)
       }
       break
     }
@@ -199,7 +184,6 @@ save2csv <- function(info_50, output, fileEncoding, env) {
 }
 
 
-# scrape_50
 #' Scrape 50 cattle
 #'
 #' @param scrape_start,scrape_end Define lines to scrape
@@ -286,4 +270,3 @@ scrape_50 <- function(scrape_start, scrape_end, ids, output, lng_ids,
                    label = paste0(i, "/", lng_ids))
   }
 }
-

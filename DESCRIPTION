@@ -12,7 +12,8 @@ Imports: tcltk,
     tcltk2,
     rvest,
     methods,
-    utils
+    utils,
+    glue
 Suggests: testthat,
     stringr,
     readr,
