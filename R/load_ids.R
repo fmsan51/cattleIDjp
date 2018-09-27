@@ -6,10 +6,12 @@
 #' @param col The column number contains cattle ID numbers.
 #'   When use_clipboard = T, this parameter is ignored.
 #' @param skip,nrows,... Be passed to \code{\link{read.csv}}
+#' @param fileEncoding Encoding of the input/output file. See \code{\link{file}}.
 #' @return Loaderd cattle id numbers
 #'
 #' @importFrom utils askYesNo read.csv read.table
-load_ids <- function(input, use_clipboard = F, col = 1, skip = 0, nrows = -1, ...) {
+load_ids <- function(input, use_clipboard = F, col = 1, skip = 0, nrows = -1,
+                     fileEncoding = getOption("encoding"), ...) {
   if (use_clipboard) {
     # ids <-
     #   tryCatch(read.table(file = "clipboard", colClasses = "character", ...),
@@ -24,7 +26,7 @@ load_ids <- function(input, use_clipboard = F, col = 1, skip = 0, nrows = -1, ..
     #            })
     ids <- withCallingHandlers(
       read.table(file = "clipboard", colClasses = "character",
-                 skip = skip, nrows = nrows, ...),
+                 skip = skip, nrows = nrows, fileEncoding = fileEncoding, ...),
       warning = function(w) {
         if (any(grepl("incomplete final line", w))) {
           invokeRestart("muffleWarning")
@@ -33,7 +35,8 @@ load_ids <- function(input, use_clipboard = F, col = 1, skip = 0, nrows = -1, ..
     ids <- as.vector(as.matrix(ids))
   } else {
     ids <- read.csv(file = input, header = F,
-                    colClasses = "character", skip = skip, nrows = nrows, ...)
+                    colClasses = "character", skip = skip, nrows = nrows,
+                    fileEncoding = fileEncoding, ...)
     if (!is.vector(ids)) {
       ids <- try(ids[, col], silent = T)
       if (class(ids) == "try-error") {

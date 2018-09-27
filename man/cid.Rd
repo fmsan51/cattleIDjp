@@ -8,17 +8,22 @@
 \alias{cid_clipboard}
 \title{Search cattle information by ID}
 \usage{
-cid_dialog(encoding = getOption("encoding"))
+cid_dialog(encoding = getOption("encoding"),
+  fileEncoding = getOption("encoding"))
 
 cid_csv(input, output = "cattle_info.csv", append = T, col = 1,
-  skip = 0, nrows = -1, ...)
+  skip = 0, nrows = -1, fileEncoding = getOption("encoding"), ...)
 
-cid_vector(input, output = "cattle_info.csv", append = T)
+cid_vector(input, output = "cattle_info.csv", append = T,
+  fileEncoding = getOption("encoding"))
 
-cid_clipboard(output = "cattle_info.csv", append = T)
+cid_clipboard(output = "cattle_info.csv", append = T,
+  fileEncoding = getOption("encoding"))
 }
 \arguments{
 \item{encoding}{Encoding of file names}
+
+\item{fileEncoding}{Encoding of the input/output file. See \code{\link{file}}.}
 
 \item{input}{Path to a input csv file (\code{cid_csv}) or a vector (integer/numeric/character/factor) (\code{cid_vector}). A factor vector is interpretted 'literally'.}
 

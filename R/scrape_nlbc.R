@@ -7,7 +7,7 @@
 #' @param append If an output file is already exist, append output file (T)
 #'   or create a new file (F). When append = T, ERROR rows in previous output
 #'   file will be removed.
-#' @param fileEncoding Encoding of the output file. See \code{\link{file}}.
+#' @param fileEncoding Encoding of the input/output file. See \code{\link{file}}.
 #' @param gui_pb Show progress bar in a window (T) or in console (F)
 #'
 #' @importFrom utils write.table
@@ -23,17 +23,18 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
   # Make output file
   if (!is.null(output)) {
     if (file.exists(output) & append == T) {
-      prev_out <- read.csv(output, header = T)
+      prev_out <- read.csv(output, header = T, fileEncoding = fileEncoding,
+                           colClasses = "character")
       saved_err_ids <- prev_out[(prev_out[, 2] == "ERROR"), 1]
       prev_out <- prev_out[(prev_out[, 2] != "ERROR"), ]
       write.table(prev_out, file = output, sep = ",",
-                  row.names = F, col.names = T)
+                  row.names = F, col.names = T, fileEncoding = fileEncoding)
     } else {
       saved_err_ids <- numeric(0)
       table_title <- matrix(nrow = 0, ncol = 10)
       colnames(table_title) <- c(msg_info$cattle, msg_info$farm)
       write.table(table_title, file = output, sep = ",",
-                  row.names = F, col.names = T)
+                  row.names = F, col.names = T, fileEncoding = fileEncoding)
     }
   }
 

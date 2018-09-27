@@ -5,7 +5,7 @@
 \title{Loads cattle ID numbers from a csv file or clipboard}
 \usage{
 load_ids(input, use_clipboard = F, col = 1, skip = 0, nrows = -1,
-  ...)
+  fileEncoding = getOption("encoding"), ...)
 }
 \arguments{
 \item{input}{Path to a input csv file}
@@ -16,6 +16,8 @@ load_ids(input, use_clipboard = F, col = 1, skip = 0, nrows = -1,
 When use_clipboard = T, this parameter is ignored.}
 
 \item{skip, nrows, ...}{Be passed to \code{\link{read.csv}}}
+
+\item{fileEncoding}{Encoding of the input/output file. See \code{\link{file}}.}
 }
 \value{
 Loaderd cattle id numbers

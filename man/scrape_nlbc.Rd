@@ -17,7 +17,7 @@ If \code{NULL}, no csv file will be made.}
 or create a new file (F). When append = T, ERROR rows in previous output
 file will be removed.}
 
-\item{fileEncoding}{Encoding of the output file. See \code{\link{file}}.}
+\item{fileEncoding}{Encoding of the input/output file. See \code{\link{file}}.}
 
 \item{gui_pb}{Show progress bar in a window (T) or in console (F)}
 }

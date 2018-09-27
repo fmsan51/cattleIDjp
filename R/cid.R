@@ -27,6 +27,7 @@
 #' @param col The column number of the input file contains cattle ID numbers.
 #' @param skip,nrows,... Be passed to \code{\link{read.csv}}
 #' @param encoding Encoding of file names
+#' @param fileEncoding Encoding of the input/output file. See \code{\link{file}}.
 #'
 #' @return A data.frame contains cattle information
 #'
@@ -44,7 +45,8 @@ NULL
 # cid_dialog
 #' @rdname cid
 #' @export
-cid_dialog <- function(encoding = getOption("encoding")) {
+cid_dialog <- function(encoding = getOption("encoding"),
+                       fileEncoding = getOption("encoding")) {
   loc <- Sys.getlocale("LC_CTYPE")
   Sys.setlocale("LC_CTYPE", "Japanese")
   on.exit(Sys.setlocale("LC_CTYPE", loc))
@@ -52,7 +54,7 @@ cid_dialog <- function(encoding = getOption("encoding")) {
   res_dialog <- make_dialog(encoding)
   ids <- validate_ids(res_dialog$ids)
   info <- scrape_nlbc(ids, res_dialog$output, append = res_dialog$append,
-                      gui_pb = T)
+                      fileEncoding = fileEncoding, gui_pb = T)
   dialog_finished()
 
   invisible(info)
@@ -62,14 +64,17 @@ cid_dialog <- function(encoding = getOption("encoding")) {
 #' @rdname cid
 #' @export
 cid_csv <- function(input, output = "cattle_info.csv", append = T, col = 1,
-                    skip = 0, nrows = -1, ...) {
+                    skip = 0, nrows = -1, fileEncoding = getOption("encoding"),
+                    ...) {
   loc <- Sys.getlocale("LC_CTYPE")
   Sys.setlocale("LC_CTYPE", "Japanese")
   on.exit(Sys.setlocale("LC_CTYPE", loc))
 
-  ids <- load_ids(input = input, col = col, skip = skip, nrows = nrows, ...)
+  ids <- load_ids(input = input, col = col, skip = skip, nrows = nrows,
+                  fileEncoding = fileEncoding, ...)
   ids <- validate_ids(ids)
-  info <- scrape_nlbc(ids, output, append = append, gui_pb = F)
+  info <- scrape_nlbc(ids, output, append = append,
+                      fileEncoding = fileEncoding, gui_pb = F)
 
   if (is.null(output)) {
     return(info)
@@ -81,13 +86,15 @@ cid_csv <- function(input, output = "cattle_info.csv", append = T, col = 1,
 
 #' @rdname cid
 #' @export
-cid_vector <- function(input, output = "cattle_info.csv", append = T) {
+cid_vector <- function(input, output = "cattle_info.csv",
+                       append = T, fileEncoding = getOption("encoding")) {
   loc <- Sys.getlocale("LC_CTYPE")
   Sys.setlocale("LC_CTYPE", "Japanese")
   on.exit(Sys.setlocale("LC_CTYPE", loc))
 
   ids <- validate_ids(input)
-  info <- scrape_nlbc(ids, output, append = append, gui_pb = F)
+  info <- scrape_nlbc(ids, output, append = append,
+                      fileEncoding = fileEncoding, gui_pb = F)
 
   if (is.null(output)) {
     return(info)
@@ -100,14 +107,16 @@ cid_vector <- function(input, output = "cattle_info.csv", append = T) {
 # cid_clipboard
 #' @rdname cid
 #' @export
-cid_clipboard <- function(output = "cattle_info.csv", append = T) {
+cid_clipboard <- function(output = "cattle_info.csv", append = T,
+                          fileEncoding = getOption("encoding")) {
   loc <- Sys.getlocale("LC_CTYPE")
   Sys.setlocale("LC_CTYPE", "Japanese")
   on.exit(Sys.setlocale("LC_CTYPE", loc))
 
-  ids <- load_ids(use_clipboard = T)
+  ids <- load_ids(use_clipboard = T, fileEncoding = fileEncoding)
   ids <- validate_ids(ids)
-  info <- scrape_nlbc(ids, output, append = append, gui_pb = F)
+  info <- scrape_nlbc(ids, output, append = append,
+                      fileEncoding = fileEncoding, gui_pb = F)
 
   if (is.null(output)) {
     return(info)
