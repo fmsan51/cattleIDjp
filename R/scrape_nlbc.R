@@ -23,7 +23,8 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
             Sys.time() + (lng_ids * 5.5) + (lng_ids %/% 50 * 30),
             "\n", sep = " "))
 
-  err_file <- file.path(dirname(output), "cid_error.log")
+  err_file_name <- paste0("cid_error_", gsub("\\..+$", "", output), ".log")
+  err_file <- file.path(dirname(output), err_file_name)
   file.create(err_file)
 
   # Make output file
@@ -40,11 +41,9 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
 
   now_scraping <- 0
   scrape_start <- 1
-  flag_end <- 0
-  flag_error <- 0
-  flag_nocattle <- 0
-  errmsg_start <- NULL
-  errmsg_end <- NULL
+  flag_end <- F
+  flag_error <- F
+  flag_nocattle <- F
   env_nlbc <- environment()
 
   pb_max <- ifelse(lng_ids == 1, 2, lng_ids)
@@ -57,7 +56,7 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
       scrape_end <- scrape_start + 49
     } else {
       scrape_end <- lng_ids
-      flag_end <- 1
+      flag_end <- T
     }
 
     err_catch <-
@@ -65,38 +64,38 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
                     fileEncoding, gui_pb, pb, env_nlbc),
           silent = T)
     if (class(err_catch) == "try-error") {
-      flag_error <- 1
+      flag_error <- T
       # Continue scraping if a error is caused by
       # that there is no cattle correspoinding to a ID,
       # otherwise terminate scraping.
       if (attributes(err_catch)$condition$message == "err_nocattle") {
-        if (flag_nocattle == 0) {
+        if (!flag_nocattle) {
           cat("Following cattle were not in the database: ", file = err_file)
-          flag_nocattle <- 1
+          flag_nocattle <- T
         }
         cat(now_scraping, "", file = err_file, append = T)
-        flag_end <- ifelse(now_scraping == lng_ids, 1, 0)
+        flag_end <- (now_scraping == lng_ids)
       } else {
         write_log(err_file, flag_nocattle, now_scraping, lng_ids)
-        flag_unknown_error <- 1
-        flag_end <- 1
+        flag_unknown_error <- T
+        flag_end <- T
       }
     }
 
     scrape_start <- now_scraping + 1
 
-    if (flag_end == 1) {
-      if (flag_error == 0) {
+    if (flag_end) {
+      if (!flag_error) {
         cat("\n", msg_scrape$finished, "\n")
         file.remove(err_file)
       } else {
-        if (flag_nocattle == 1) {
-          warning("Some cattle were not found on database.", call. = F)
+        if (flag_nocattle) {
+          warning("\nSome cattle were not found on database.", call. = F)
         }
-        if (flag_unknown_error == 1) {
-          warning("Encontered unknown error.", call. = F)
+        if (flag_unknown_error) {
+          warning("\nEncontered unknown error.", call. = F)
         }
-        warning("See cid_err.log.", call. = F)
+        warning("\nSee ", err_file_name, ".", call. = F)
       }
       break
     }
@@ -271,7 +270,7 @@ scrape_50 <- function(scrape_start, scrape_end, ids, output, lng_ids,
 #' @param now_scrapoing Index of ID of current scraping cattle
 #' @param lng_ids Length of IDs
 write_log <- function(err_file, flag_nocattle, now_scraping, lng_ids) {
-  if (flag_nocattle == 1) {
+  if (flag_nocattle) {
     cat("\n", file = err_file)
   }
   cat(glue::glue(
