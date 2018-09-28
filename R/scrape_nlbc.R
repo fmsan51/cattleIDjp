@@ -22,7 +22,9 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
             Sys.time() + (lng_ids * 5.5) + (lng_ids %/% 50 * 30),
             "\n", sep = " "))
 
-  err_file_name <- paste0("cid_error_", gsub("\\..+$", "", output), ".log")
+  err_file_name <- paste0("cid_error_",
+                          gsub("\\..+$", "", basename(output)),
+                          ".log")
   err_file <- file.path(dirname(output), err_file_name)
   file.create(err_file)
 
