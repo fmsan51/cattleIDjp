@@ -15,7 +15,8 @@
 scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
                         fileEncoding = getOption("encoding"), gui_pb = F) {
   lng_ids <- length(ids)
-  on.exit(close(pb))
+  on.exit(write_log(err_file, flag_nocattle, now_scraping, lng_ids))
+  on.exit(close(pb), add = T)
   on.exit(return(info), add = T)
 
   cat(paste(msg_scrape$estimate,
@@ -42,7 +43,6 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
   flag_end <- 0
   flag_error <- 0
   flag_nocattle <- 0
-  has_ctl_aft_err <- F
   errmsg_start <- NULL
   errmsg_end <- NULL
   env_nlbc <- environment()
@@ -77,15 +77,7 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
         cat(now_scraping, "", file = err_file, append = T)
         flag_end <- ifelse(now_scraping == lng_ids, 1, 0)
       } else {
-        has_ctl_aft_err <- (now_scraping != lng_ids)
-        if (flag_nocattle == 1) {
-          cat("\n", file = err_file)
-        }
-        cat(glue::glue(
-          "[{Sys.time()}] Encountered unknown error and \\",
-          "information for following cattle were not obtained: \\",
-          "{now_scraping}{ifelse(has_ctl_aft_err, msg_scrape$after, \"\")}"
-        ), file = err_file, append = T)
+        write_log(err_file, flag_nocattle, now_scraping, lng_ids)
         flag_unknown_error <- 1
         flag_end <- 1
       }
@@ -269,4 +261,23 @@ scrape_50 <- function(scrape_start, scrape_end, ids, output, lng_ids,
                    title = sprintf("%d%%", round((i - 1) / lng_ids * 100)),
                    label = paste0(i, "/", lng_ids))
   }
+}
+
+
+#' Output error-log
+#'
+#' @param err_file Path to the error log file
+#' @param flag_nocattle Flag whether an error had occured due to no cattle in the database.
+#' @param now_scrapoing Index of ID of current scraping cattle
+#' @param lng_ids Length of IDs
+write_log <- function(err_file, flag_nocattle, now_scraping, lng_ids) {
+  if (flag_nocattle == 1) {
+    cat("\n", file = err_file)
+  }
+  cat(glue::glue(
+    "[{Sys.time()}] Encountered unknown error and \\",
+    "information for following cattle were not obtained: \\",
+    "{now_scraping}{ifelse(lng_ids == now_scraping, \"\", msg_scrape$after)}"
+  ), file = err_file, append = T)
+  invisible(NULL)
 }
