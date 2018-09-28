@@ -14,7 +14,9 @@
 scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
                         fileEncoding = getOption("encoding"), gui_pb = F) {
   lng_ids <- length(ids)
-  on.exit(write_log(err_file, flag_nocattle, now_scraping, lng_ids))
+  on.exit(ifelse(flag_error,
+                 write_log(err_file, flag_nocattle, ids, now_scraping, lng_ids),
+                 cat()))
   on.exit(close(pb), add = T)
   on.exit(return(info), add = T)
 
