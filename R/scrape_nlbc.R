@@ -31,10 +31,10 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
   file.create(err_file)
 
   # Make output file
-  if (!is.null(output) & (file.exists(output) | append == F)) {
+  if (!is.null(output) & (!file.exists(output) | append == F)) {
     table_title <- matrix(nrow = 0, ncol = 10)
     colnames(table_title) <- c(msg_info$cattle, msg_info$farm)
-    write.table(table_title, file = output, sep = ",",
+    write.table(table_title, file = output, append = F, sep = ",",
                 row.names = F, col.names = T, fileEncoding = fileEncoding)
   }
 
