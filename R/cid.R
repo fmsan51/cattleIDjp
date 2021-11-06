@@ -22,7 +22,7 @@
 #' @param output Path to a output csv file.
 #'   If \code{NULL}, no csv file will be made.
 #' @param append If an output file is already exist, append output file (T)
-#'   or create a new file (F). When \code{append = T}, ERROR rows in previous
+#'   or create a new file (F). When \code{append = T}, NA rows in previous
 #'   output file will be removed.
 #' @param col The column number of the input file contains cattle ID numbers.
 #' @param skip,nrows,... Be passed to \code{\link{read.csv}}

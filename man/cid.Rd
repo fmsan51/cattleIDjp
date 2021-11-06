@@ -8,17 +8,34 @@
 \alias{cid_clipboard}
 \title{Search cattle information by ID}
 \usage{
-cid_dialog(encoding = getOption("encoding"),
-  fileEncoding = getOption("encoding"))
+cid_dialog(
+  encoding = getOption("encoding"),
+  fileEncoding = getOption("encoding")
+)
 
-cid_csv(input, output = "cattle_info.csv", append = T, col = 1,
-  skip = 0, nrows = -1, fileEncoding = getOption("encoding"), ...)
+cid_csv(
+  input,
+  output = "cattle_info.csv",
+  append = T,
+  col = 1,
+  skip = 0,
+  nrows = -1,
+  fileEncoding = getOption("encoding"),
+  ...
+)
 
-cid_vector(input, output = "cattle_info.csv", append = T,
-  fileEncoding = getOption("encoding"))
+cid_vector(
+  input,
+  output = "cattle_info.csv",
+  append = T,
+  fileEncoding = getOption("encoding")
+)
 
-cid_clipboard(output = "cattle_info.csv", append = T,
-  fileEncoding = getOption("encoding"))
+cid_clipboard(
+  output = "cattle_info.csv",
+  append = T,
+  fileEncoding = getOption("encoding")
+)
 }
 \arguments{
 \item{encoding}{Encoding of file names}
@@ -31,7 +48,7 @@ cid_clipboard(output = "cattle_info.csv", append = T,
 If \code{NULL}, no csv file will be made.}
 
 \item{append}{If an output file is already exist, append output file (T)
-or create a new file (F). When \code{append = T}, ERROR rows in previous
+or create a new file (F). When \code{append = T}, NA rows in previous
 output file will be removed.}
 
 \item{col}{The column number of the input file contains cattle ID numbers.}

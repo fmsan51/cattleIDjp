@@ -4,8 +4,17 @@
 \alias{scrape_50}
 \title{Scrape 50 cattle}
 \usage{
-scrape_50(scrape_start, scrape_end, ids, output, lng_ids, fileEncoding,
-  gui_pb, pb, env_nlbc)
+scrape_50(
+  scrape_start,
+  scrape_end,
+  ids,
+  output,
+  lng_ids,
+  fileEncoding,
+  gui_pb,
+  pb,
+  env_nlbc
+)
 }
 \arguments{
 \item{scrape_start, scrape_end}{Define lines to scrape}

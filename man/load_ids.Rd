@@ -4,8 +4,15 @@
 \alias{load_ids}
 \title{Loads cattle ID numbers from a csv file or clipboard}
 \usage{
-load_ids(input, use_clipboard = F, col = 1, skip = 0, nrows = -1,
-  fileEncoding = getOption("encoding"), ...)
+load_ids(
+  input,
+  use_clipboard = F,
+  col = 1,
+  skip = 0,
+  nrows = -1,
+  fileEncoding = getOption("encoding"),
+  ...
+)
 }
 \arguments{
 \item{input}{Path to a input csv file}

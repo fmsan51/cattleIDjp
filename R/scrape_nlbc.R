@@ -5,7 +5,7 @@
 #' @param output Path to output file.
 #'   If \code{NULL}, no csv file will be made.
 #' @param append If an output file is already exist, append output file (T)
-#'   or create a new file (F). When append = T, ERROR rows in previous output
+#'   or create a new file (F). When append = T, NA rows in previous output
 #'   file will be removed.
 #' @param fileEncoding Encoding of the input/output file. See \code{\link{file}}.
 #' @param gui_pb Show progress bar in a window (T) or in console (F)
@@ -30,16 +30,27 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
   file.create(err_file)
 
   # Make output file
-  if (!is.null(output) & (!file.exists(output) | append == F)) {
-    table_title <- matrix(nrow = 0, ncol = 10)
-    colnames(table_title) <- c(msg_info$cattle, msg_info$farm)
-    write.table(table_title, file = output, append = F, sep = ",",
-                row.names = F, col.names = T, fileEncoding = fileEncoding)
+  if (!is.null(output)) {
+    if (file.exists(output) & append == T) {
+      prev_out <- read.csv(output, header = T)
+      prev_out <- prev_out[(!is.na(prev_out[, 2])), ]
+      write.table(prev_out, file = output, sep = ",",
+                  row.names = F, col.names = T, fileEncoding = fileEncoding)
+    } else {
+      table_title <- matrix(nrow = 0, ncol = 10)
+      colnames(table_title) <- c(msg_info$cattle, msg_info$farm)
+      write.table(table_title, file = output, sep = ",",
+                  row.names = F, col.names = T, fileEncoding = fileEncoding)
+    }
   }
 
   # Output table
   info <- data.frame(matrix(nrow = 0, ncol = 10))
   colnames(info) <- c(msg_info$cattle, msg_info$farm)
+
+  # A table to contain NA
+  table_err_1 <- data.frame(matrix(rep(NA, 10), nrow = 1, ncol = 10))
+  colnames(table_err_1) <- c(msg_info$cattle, msg_info$farm)
 
   now_scraping <- 0
   scrape_start <- 1
