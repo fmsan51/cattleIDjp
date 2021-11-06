@@ -113,10 +113,10 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
 #' Scrape information of cattle from a NLBC information page
 #'
 #' @param page html page
-#' @importFrom rvest html_nodes
+#' @importFrom rvest html_elements
 #' @importFrom rvest html_table
 scrape_info_cattle <- function(page) {
-  nodes <- html_nodes(page, xpath = "//span/table[1]")
+  nodes <- html_elements(page, xpath = "//span/table[1]")
   table <- html_table(nodes, fill = T)[[1]]
   return(table)
 }
@@ -125,10 +125,10 @@ scrape_info_cattle <- function(page) {
 #' Scrape information of farmer from a NLBC information page
 #'
 #' @param page html page
-#' @importFrom rvest html_nodes
+#' @importFrom rvest html_elements
 #' @importFrom rvest html_table
 scrape_info_farm <- function(page) {
-  nodes <- html_nodes(page, xpath = "//span/table[2]")
+  nodes <- html_elements(page, xpath = "//span/table[2]")
   table <- html_table(nodes, fill = T)[[1]]
   return(table[2:nrow(table), 2:ncol(table)])
 }
@@ -222,7 +222,7 @@ scrape_50 <- function(scrape_start, scrape_end, ids, output, lng_ids,
   # attr(fake_submit_button, "class") <- "input"
 
   agree_page <- tryCatch(
-    rvest::html_session(
+    rvest::session(
       "https://www.id.nlbc.go.jp/CattleSearch/search/agreement"),
     error = function(e) {
       e$message <- paste0(e$message, "\n",
@@ -235,7 +235,7 @@ scrape_50 <- function(scrape_start, scrape_end, ids, output, lng_ids,
   agree_form[["fields"]][["method:goSearch.x"]] <- gosearch_x
   agree_form[["fields"]][["method:goSearch.y"]] <- gosearch_y
   # agree_form[["fields"]][["submit"]] <- fake_submit_button
-  info_page <- rvest::submit_form(agree_page, agree_form, "method:goSearch.x")
+  info_page <- rvest::session_submit(agree_page, agree_form, "method:goSearch.x")
 
   # scrape_info(info_page, ids, scrape_start)
   setProgressBar(gui_pb, pb, scrape_start,
@@ -248,13 +248,13 @@ scrape_50 <- function(scrape_start, scrape_end, ids, output, lng_ids,
     Sys.sleep(5)
 
     search_form <- rvest::html_form(info_page)[[1]]
-    search_form <- rvest::set_values(search_form, 'txtIDNO' = ids[i])
+    search_form <- rvest::html_form_set(search_form, 'txtIDNO' = ids[i])
     search_form[["fields"]][["method:doSearch"]] <- NULL
     search_form[["fields"]][["method:doSearch.x"]] <- dosearch_x
     search_form[["fields"]][["method:doSearch.y"]] <- dosearch_y
     # search_form[["fields"]][["submit"]] <- fake_submit_button
-    info_page <- rvest::submit_form(info_page, search_form,
-                                    "method:doSearch.x")
+    info_page <- rvest::session_submit(info_page, search_form,
+                                       "method:doSearch.x")
 
     assign("now_scraping", i, envir = env_nlbc)
     info_50 <- rbind(info_50, scrape_info(info_page))
