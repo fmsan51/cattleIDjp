@@ -10,7 +10,7 @@ LazyData: true
 RoxygenNote: 7.1.1
 Imports: tcltk,
     tcltk2,
-    rvest,
+    rvest (>= 1.0.0),
     methods,
     utils,
     glue
