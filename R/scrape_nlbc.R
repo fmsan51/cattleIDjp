@@ -151,7 +151,6 @@ scrape_info_farm <- function(page) {
 #'
 #' @importFrom methods cbind2
 scrape_info <- function(page) {
-
   info_cattle <- tryCatch(scrape_info_cattle(page),
     error = function(e) {stop("err_nocattle")})
   colnames(info_cattle) <- msg_info$cattle
