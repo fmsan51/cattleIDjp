@@ -127,7 +127,7 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
 #' @importFrom rvest html_table
 scrape_info_cattle <- function(page) {
   nodes <- html_elements(page, xpath = "//span/table[1]")
-  table <- html_table(nodes, fill = T)[[1]]
+  table <- html_table(nodes)[[1]]
   return(table)
 }
 
@@ -139,7 +139,7 @@ scrape_info_cattle <- function(page) {
 #' @importFrom rvest html_table
 scrape_info_farm <- function(page) {
   nodes <- html_elements(page, xpath = "//span/table[2]")
-  table <- html_table(nodes, fill = T)[[1]]
+  table <- html_table(nodes)[[1]]
   return(table[2:nrow(table), 2:ncol(table)])
 }
 
