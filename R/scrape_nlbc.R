@@ -129,7 +129,7 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
 #' @importFrom rvest html_table
 scrape_info_cattle <- function(page) {
   nodes <- html_elements(page, xpath = "//span/table[1]")
-  if (length(nodes == 0)) {
+  if (length(nodes) == 0) {
     stop("no cattle info")
   } else {
     table <- html_table(nodes, convert = F)[[1]]
