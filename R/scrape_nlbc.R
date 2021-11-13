@@ -25,14 +25,15 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
             Sys.time() + (lng_ids * 5.5) + (lng_ids %/% 50 * 30),
             "\n", sep = " "))
 
-  err_file_name <- paste0("cid_error_",
-                          gsub("\\..+$", "", basename(output)),
-                          ".log")
-  err_file <- file.path(dirname(output), err_file_name)
-  file.create(err_file)
-
   # Make output file
-  if (!is.null(output)) {
+  if (is.null(output)) {
+    err_file_name <- "cid_error.log"
+    err_file <- file.path(getwd(), err_file_name)
+  } else {
+    err_file_name <- paste0("cid_error_",
+                            gsub("\\..+$", "", basename(output)),
+                            ".log")
+    err_file <- file.path(dirname(output), err_file_name)
     if (file.exists(output) & append == T) {
       prev_out <- read.csv(output, header = T)
       prev_out <- prev_out[(!is.na(prev_out[, 2])), ]
@@ -45,6 +46,7 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
                   row.names = F, col.names = T, fileEncoding = fileEncoding)
     }
   }
+  file.create(err_file)
 
   # Output table
   info <- data.frame(matrix(nrow = 0, ncol = 10))
