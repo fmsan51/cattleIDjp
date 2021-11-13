@@ -127,8 +127,12 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
 #' @importFrom rvest html_table
 scrape_info_cattle <- function(page) {
   nodes <- html_elements(page, xpath = "//span/table[1]")
-  table <- html_table(nodes)[[1]]
-  return(table)
+  if (length(nodes == 0)) {
+    stop("no cattle info")
+  } else {
+    table <- html_table(nodes, convert = F)[[1]]
+    return(table)
+  }
 }
 
 # scrape_info_farm
@@ -139,8 +143,12 @@ scrape_info_cattle <- function(page) {
 #' @importFrom rvest html_table
 scrape_info_farm <- function(page) {
   nodes <- html_elements(page, xpath = "//span/table[2]")
-  table <- html_table(nodes)[[1]]
-  return(table[2:nrow(table), 2:ncol(table)])
+  table <- html_table(nodes, convert = F)[[1]]
+  if (ncol(table) == 2) {
+    return(NULL)
+  } else {
+    return(table[2:nrow(table), 2:ncol(table)])
+  }
 }
 
 
@@ -155,7 +163,14 @@ scrape_info <- function(page) {
     error = function(e) {stop("err_nocattle")})
   colnames(info_cattle) <- msg_info$cattle
 
-  info_farm <- scrape_info_farm(page)
+  info_farm <- tryCatch(scrape_info_farm(page),
+    error = function(e) {
+      e$message <- paste0("scrape_info_farm(): ", e$message)
+      stop(e)
+    })
+  if (is.null(info_farm)) {
+    info_farm <- as.data.frame(matrix(ncol = length(msg_info$farm)))
+  }
   colnames(info_farm) <- msg_info$farm
   rownames(info_farm) <- NULL
 
