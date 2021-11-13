@@ -2,5 +2,6 @@
 ^\.Rproj\.user$
 ^jp_messages
 ^cattle_info\.csv
+^*\.csv
 ^README\.Rmd$
 ^README-.*\.png$
