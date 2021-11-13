@@ -47,10 +47,6 @@ NULL
 #' @export
 cid_dialog <- function(encoding = getOption("encoding"),
                        fileEncoding = getOption("encoding")) {
-  loc <- Sys.getlocale("LC_CTYPE")
-  Sys.setlocale("LC_CTYPE", "Japanese")
-  on.exit(Sys.setlocale("LC_CTYPE", loc))
-
   res_dialog <- make_dialog(encoding)
   ids <- validate_ids(res_dialog$ids)
   info <- scrape_nlbc(ids, res_dialog$output, append = res_dialog$append,
@@ -66,10 +62,6 @@ cid_dialog <- function(encoding = getOption("encoding"),
 cid_csv <- function(input, output = "cattle_info.csv", append = T, col = 1,
                     skip = 0, nrows = -1, fileEncoding = getOption("encoding"),
                     ...) {
-  loc <- Sys.getlocale("LC_CTYPE")
-  Sys.setlocale("LC_CTYPE", "Japanese")
-  on.exit(Sys.setlocale("LC_CTYPE", loc))
-
   ids <- load_ids(input = input, col = col, skip = skip, nrows = nrows,
                   fileEncoding = fileEncoding, ...)
   ids <- validate_ids(ids)
@@ -88,10 +80,6 @@ cid_csv <- function(input, output = "cattle_info.csv", append = T, col = 1,
 #' @export
 cid_vector <- function(input, output = "cattle_info.csv",
                        append = T, fileEncoding = getOption("encoding")) {
-  loc <- Sys.getlocale("LC_CTYPE")
-  Sys.setlocale("LC_CTYPE", "Japanese")
-  on.exit(Sys.setlocale("LC_CTYPE", loc))
-
   ids <- validate_ids(input)
   info <- scrape_nlbc(ids, output, append = append,
                       fileEncoding = fileEncoding, gui_pb = F)
@@ -109,10 +97,6 @@ cid_vector <- function(input, output = "cattle_info.csv",
 #' @export
 cid_clipboard <- function(output = "cattle_info.csv", append = T,
                           fileEncoding = getOption("encoding")) {
-  loc <- Sys.getlocale("LC_CTYPE")
-  Sys.setlocale("LC_CTYPE", "Japanese")
-  on.exit(Sys.setlocale("LC_CTYPE", loc))
-
   ids <- load_ids(use_clipboard = T, fileEncoding = fileEncoding)
   ids <- validate_ids(ids)
   info <- scrape_nlbc(ids, output, append = append,
