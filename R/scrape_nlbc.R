@@ -15,8 +15,9 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
                         fileEncoding = getOption("encoding"), gui_pb = F) {
   lng_ids <- length(ids)
   err_catch <- NULL
-  on.exit(write_log(err_file, flag_error, flag_nocattle,
-                    ids, now_scraping, lng_ids, err_catch))
+  on.exit(
+    write_log(err_file, flag_error, ids, now_scraping, lng_ids, err_catch)
+  )
   on.exit(close(pb), add = T)
   on.exit(return(info), add = T)
 
@@ -57,6 +58,7 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
   scrape_start <- 1
   flag_end <- F
   flag_error <- F
+  flag_unknown_error <- F
   flag_nocattle <- F
   env_nlbc <- environment()
 
@@ -79,15 +81,13 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
           silent = T)
     if (class(err_catch) == "try-error") {
       flag_error <- T
+      attributes(err_catch)$condition$message <-
+        paste0("scrape_50(): ", attributes(err_catch)$condition$message)
       # Continue scraping if a error is caused by
       # that there is no cattle correspoinding to a ID,
       # otherwise terminate scraping.
-      if (attributes(err_catch)$condition$message == "err_nocattle") {
-        if (!flag_nocattle) {
-          cat("Following cattle were not in the database: ", file = err_file)
-          flag_nocattle <- T
-        }
-        cat(now_scraping, "", file = err_file, append = T)
+      if (!is.null(attributes(err_catch)$condition$err_nocattle)) {
+        flag_nocattle <- T
         flag_end <- (now_scraping == lng_ids)
       } else {
         flag_unknown_error <- T
@@ -103,7 +103,7 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
         file.remove(err_file)
       } else {
         if (flag_nocattle) {
-          warning("\nSome cattle were not found on database.", call. = F)
+          warning("\nSome cattle were not found on the database.", call. = F)
         }
         if (flag_unknown_error) {
           warning("\nEncontered unknown error.", call. = F)
@@ -160,7 +160,11 @@ scrape_info_farm <- function(page) {
 #' @importFrom methods cbind2
 scrape_info <- function(page) {
   info_cattle <- tryCatch(scrape_info_cattle(page),
-    error = function(e) {stop("err_nocattle")})
+    error = function(e) {
+      e$err_nocattle = (e$message = "no cattle info")
+      e$message <- paste0("scrape_info_cattle(): ", e$message)
+      stop(e)
+    })
   colnames(info_cattle) <- msg_info$cattle
 
   info_farm <- tryCatch(scrape_info_farm(page),
@@ -281,7 +285,13 @@ scrape_50 <- function(scrape_start, scrape_end, ids, output, lng_ids,
                                        "method:doSearch.x")
 
     assign("now_scraping", i, envir = env_nlbc)
-    info_50 <- rbind(info_50, scrape_info(info_page))
+    info_50 <- rbind(info_50,
+      tryCatch(scrape_info(info_page),
+               error = function(e) {
+                 e$message = paste0("scrape_info(): ID ", ids[i], ": ", e$message)
+                 stop(e)
+               })
+    )
 
     setProgressBar(gui_pb, pb, i,
                    title = sprintf("%d%%", round((i - 1) / lng_ids * 100)),
@@ -294,27 +304,23 @@ scrape_50 <- function(scrape_start, scrape_end, ids, output, lng_ids,
 #'
 #' @param err_file Path to the error log file
 #' @param flag_error Flag whether an error had occurred
-#' @param flag_nocattle Flag whether an error had occured due to no cattle in the database.
 #' @param ids IDs to search
 #' @param now_scrapoing Index of ID of current scraping cattle
 #' @param lng_ids Length of IDs
 #' @param err_catch An object of class `try-error`
 #'
 #' @importFrom glue glue
-write_log <- function(err_file, flag_error, flag_nocattle,
+write_log <- function(err_file, flag_error,
                       ids, now_scraping, lng_ids, err_catch) {
   if (flag_error) {
-    if (flag_nocattle) {
-      cat("\n", file = err_file)
-    }
     cat(glue::glue("
-      [{Sys.time()}] Encountered unknown error and \\
+      [{Sys.time()}] Encountered error and \\
       information for following cattle were not obtained: \\
       {ids[now_scraping]}\\
       {ifelse(lng_ids == now_scraping, \"\", msg_scrape$after)}\\
       {ifelse(is.null(err_catch), \"\",
        paste0(\"  \", attributes(err_catch)$condition$message))}"
-    ), file = err_file, append = T)
+    ), file = err_file)
   }
   invisible(NULL)
 }

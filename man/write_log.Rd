@@ -4,22 +4,12 @@
 \alias{write_log}
 \title{Output error-log}
 \usage{
-write_log(
-  err_file,
-  flag_error,
-  flag_nocattle,
-  ids,
-  now_scraping,
-  lng_ids,
-  err_catch
-)
+write_log(err_file, flag_error, ids, now_scraping, lng_ids, err_catch)
 }
 \arguments{
 \item{err_file}{Path to the error log file}
 
 \item{flag_error}{Flag whether an error had occurred}
-
-\item{flag_nocattle}{Flag whether an error had occured due to no cattle in the database.}
 
 \item{ids}{IDs to search}
 
