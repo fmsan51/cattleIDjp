@@ -14,8 +14,9 @@
 scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
                         fileEncoding = getOption("encoding"), gui_pb = F) {
   lng_ids <- length(ids)
+  err_catch <- NULL
   on.exit(write_log(err_file, flag_error, flag_nocattle,
-                    ids, now_scraping, lng_ids))
+                    ids, now_scraping, lng_ids, err_catch))
   on.exit(close(pb), add = T)
   on.exit(return(info), add = T)
 
@@ -89,8 +90,6 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
         cat(now_scraping, "", file = err_file, append = T)
         flag_end <- (now_scraping == lng_ids)
       } else {
-        write_log(err_file, flag_error, flag_nocattle,
-                  ids, now_scraping, lng_ids)
         flag_unknown_error <- T
         flag_end <- T
       }
@@ -285,10 +284,11 @@ scrape_50 <- function(scrape_start, scrape_end, ids, output, lng_ids,
 #' @param ids IDs to search
 #' @param now_scrapoing Index of ID of current scraping cattle
 #' @param lng_ids Length of IDs
+#' @param err_catch An object of class `try-error`
 #'
 #' @importFrom glue glue
 write_log <- function(err_file, flag_error, flag_nocattle,
-                      ids, now_scraping, lng_ids) {
+                      ids, now_scraping, lng_ids, err_catch) {
   if (flag_error) {
     if (flag_nocattle) {
       cat("\n", file = err_file)
@@ -297,7 +297,9 @@ write_log <- function(err_file, flag_error, flag_nocattle,
       [{Sys.time()}] Encountered unknown error and \\
       information for following cattle were not obtained: \\
       {ids[now_scraping]}\\
-      {ifelse(lng_ids == now_scraping, \"\", msg_scrape$after)}"
+      {ifelse(lng_ids == now_scraping, \"\", msg_scrape$after)}\\
+      {ifelse(is.null(err_catch), \"\",
+       paste0(\"  \", attributes(err_catch)$condition$message))}"
     ), file = err_file, append = T)
   }
   invisible(NULL)

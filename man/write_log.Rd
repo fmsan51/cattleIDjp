@@ -4,7 +4,15 @@
 \alias{write_log}
 \title{Output error-log}
 \usage{
-write_log(err_file, flag_error, flag_nocattle, ids, now_scraping, lng_ids)
+write_log(
+  err_file,
+  flag_error,
+  flag_nocattle,
+  ids,
+  now_scraping,
+  lng_ids,
+  err_catch
+)
 }
 \arguments{
 \item{err_file}{Path to the error log file}
@@ -16,6 +24,8 @@ write_log(err_file, flag_error, flag_nocattle, ids, now_scraping, lng_ids)
 \item{ids}{IDs to search}
 
 \item{lng_ids}{Length of IDs}
+
+\item{err_catch}{An object of class `try-error`}
 
 \item{now_scrapoing}{Index of ID of current scraping cattle}
 }
