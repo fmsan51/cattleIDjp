@@ -48,8 +48,7 @@ cid_clipboard(
 If \code{NULL}, no csv file will be made.}
 
 \item{append}{If an output file is already exist, append output file (T)
-or create a new file (F). When \code{append = T}, NA rows in previous
-output file will be removed.}
+or create a new file (F).}
 
 \item{col}{The column number of the input file contains cattle ID numbers.}
 
