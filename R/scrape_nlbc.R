@@ -83,7 +83,8 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
       # Continue scraping if a error is caused by
       # that there is no cattle correspoinding to a ID,
       # otherwise terminate scraping.
-      if (!is.null(attributes(err_catch)$condition$err_nocattle)) {
+      if (!is.null(attributes(err_catch)$condition$err_nocattle) &&
+          attributes(err_catch)$condition$err_nocattle) {
         flag_nocattle <- T
         flag_end <- (now_scraping == lng_ids)
       } else {
@@ -158,7 +159,7 @@ scrape_info_farm <- function(page) {
 scrape_info <- function(page) {
   info_cattle <- tryCatch(scrape_info_cattle(page),
     error = function(e) {
-      e$err_nocattle = (e$message = "no cattle info")
+      e$err_nocattle <- (e$message == "no cattle info")
       e$message <- paste0("scrape_info_cattle(): ", e$message)
       stop(e)
     })
