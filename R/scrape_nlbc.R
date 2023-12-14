@@ -39,7 +39,8 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
       write.table(prev_out, file = output, sep = ",",
                   row.names = F, col.names = T, fileEncoding = fileEncoding)
     } else {
-      table_title <- matrix(nrow = 0, ncol = 10)
+      table_title <- matrix(nrow = 0,
+                            ncol = length(c(msg_info$cattle, msg_info$farm)))
       colnames(table_title) <- c(msg_info$cattle, msg_info$farm)
       write.table(table_title, file = output, sep = ",",
                   row.names = F, col.names = T, fileEncoding = fileEncoding)
@@ -48,7 +49,10 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
   file.create(err_file)
 
   # Output table
-  info <- data.frame(matrix(nrow = 0, ncol = 10))
+  info <- data.frame(
+    matrix(NA_character_,
+           nrow = 0, ncol = length(c(msg_info$cattle, msg_info$farm)))
+  )
   colnames(info) <- c(msg_info$cattle, msg_info$farm)
 
   now_scraping <- 0
@@ -163,7 +167,6 @@ scrape_info <- function(page) {
       e$message <- paste0("scrape_info_cattle(): ", e$message)
       stop(e)
     })
-  colnames(info_cattle) <- msg_info$cattle
 
   info_farm <- tryCatch(scrape_info_farm(page),
     error = function(e) {
@@ -191,10 +194,11 @@ scrape_info <- function(page) {
 #' @param fileEncoding Encoding of the output file. See \code{\link{file}}.
 #' @param env Envirionment which has a variable "info". (Don't set it manually.)
 #'
+#' @importFrom dplyr bind_rows
 #' @importFrom utils write.table
 save2csv <- function(info_50, output, fileEncoding, env) {
   info <- get("info", envir = env)
-  info <- rbind(info, info_50)
+  info <- dplyr::bind_rows(info, info_50)
   assign("info", info, envir = env)
   if (!is.null(output)) {
     write.table(info_50, file = output, sep = ",",
@@ -216,11 +220,16 @@ save2csv <- function(info_50, output, fileEncoding, env) {
 #' @param pb Progress bar (Don't set it manually)
 #' @param env_nlbc Parent frame (Don't set it manually)
 #'
+#' @importFrom dplyr bind_rows
 #' @importFrom rvest html_form html_form_set session session_submit
 scrape_50 <- function(scrape_start, scrape_end, ids, output, lng_ids,
                       fileEncoding, gui_pb, pb, env_nlbc) {
   # Table to output
-  info_50 <- matrix(nrow = 0, ncol = 10)
+  info_50 <- as.data.frame(
+    matrix(NA_character_,
+           nrow = 0, ncol = length(c(msg_info$cattle, msg_info$farm)))
+  )
+  colnames(info_50) <- c(msg_info$cattle, msg_info$farm)
   on.exit(save2csv(info_50, output, fileEncoding, env_nlbc))
 
   assign("now_scraping", scrape_start, envir = env_nlbc)
@@ -283,7 +292,7 @@ scrape_50 <- function(scrape_start, scrape_end, ids, output, lng_ids,
                                        "method:doSearch.x")
 
     assign("now_scraping", i, envir = env_nlbc)
-    info_50 <- rbind(info_50,
+    info_50 <- dplyr::bind_rows(info_50,
       tryCatch(scrape_info(info_page),
                error = function(e) {
                  e$message = paste0("scrape_info(): ID ", ids[i], ": ", e$message)

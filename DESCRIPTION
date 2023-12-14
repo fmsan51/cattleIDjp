@@ -13,7 +13,8 @@ Imports: tcltk,
     rvest (>= 1.0.0),
     methods,
     utils,
-    glue
+    glue,
+    dplyr
 Suggests: testthat,
     stringr,
     readr,
