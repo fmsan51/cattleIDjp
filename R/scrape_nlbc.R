@@ -101,12 +101,12 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
         file.remove(err_file)
       } else {
         if (flag_nocattle) {
-          warning("\nSome cattle were not found on the database.", call. = F)
+          warning("Some cattle were not found on the database.", call. = F)
         }
         if (flag_unknown_error) {
-          warning("\nEncontered unknown error.", call. = F)
+          warning("Encontered unknown error.", call. = F)
         }
-        warning("\nSee ", err_file_name, ".", call. = F)
+        warning("See ", err_file_name, ".", call. = F)
       }
       break
     }
