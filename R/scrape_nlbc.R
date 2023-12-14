@@ -21,7 +21,7 @@ scrape_nlbc <- function(ids, output = "cattle_info.csv", append = T,
   on.exit(return(info), add = T)
 
   cat(paste(msg_scrape$estimate,
-            Sys.time() + (lng_ids * 5.5) + (lng_ids %/% 50 * 30),
+            round(Sys.time() + (lng_ids * 5.5) + (lng_ids %/% 50 * 30)),
             "\n", sep = " "))
 
   # Make output file
