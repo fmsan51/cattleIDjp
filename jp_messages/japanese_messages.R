@@ -21,7 +21,7 @@ msg_dialog_finished <- list(
 
 msg_info <- list(
   cattle = c("個体識別番号", "出生の年月日", "雌雄の別", "母牛の個体識別番号",
-             "種別"),
+             "種別", "輸入年月日", "輸入先の国名"),
   farm = c("異動内容", "異動年月日", "都道府県", "市町村", "氏名または名称")
 )
 
@@ -39,5 +39,5 @@ msg_dialog_finished <- lapply(msg_dialog_finished, iconv, to = "UTF-8")
 msg_info <- lapply(msg_info, iconv, to = "UTF-8")
 msg_scrape <- lapply(msg_scrape, iconv, to = "UTF-8")
 
-devtools::use_data(msg_make_dialog, msg_dialog_finished, msg_info, msg_scrape,
+usethis::use_data(msg_make_dialog, msg_dialog_finished, msg_info, msg_scrape,
                    internal = T, overwrite = T)
